@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="Profile.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" href="../Landing_Page/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css"
+    />
+    <link rel="stylesheet" href="../cropperjs/cropper.css" />
+    <style>
+      /* Importing Google Fonts */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+      /* Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      /* CSS for profile picture */
+      .User_Image {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        border: 2px solid #eee;
+        object-fit: fill;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 80px;
+        background-color: black;
+        transition: all 0.5s ease;
+        padding: 0.4rem 0.8rem; /* Padding using rem */
+      }
+
+      #sub-heading {
+        position: absolute;
+        opacity: 0;
+        left: 100px;
+      }
+
+      #main-heading,
+      h3 {
+        transition: opacity 0.5s ease-in;
+      }
+
+      .sidebar.active {
+        width: 250px;
+      }
+
+      .sidebar.active ~ .main_content {
+        left: 250px;
+        width: calc(100% - 25px);
+      }
+
+      .sidebar.active ~ .main_content #main-heading {
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+      }
+
+      .sidebar.active ~ .main_content h3 {
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+      }
+
+      .sidebar.active ~ .main_content #sub-heading {
+        left: 30px;
+        opacity: 1;
+        transition: opacity 0.5s ease-in;
+      }
+
+      .sidebar #btn {
+        position: absolute;
+        color: #fff;
+        top: 0.4rem;
+        left: 50%;
+        font-size: 1.2rem;
+        line-height: 50px;
+        transform: translateX(-50%);
+        cursor: pointer;
+      }
+
+      .sidebar.active #btn {
+        left: 90%;
+      }
+
+      .sidebar .top .logo {
+        color: #fff;
+        display: flex;
+        height: 50px;
+        width: 50px;
+        align-items: center;
+        pointer-events: none;
+        opacity: 0;
+      }
+
+      .sidebar.active .top .logo {
+        opacity: 1;
+      }
+
+      .top .logo i {
+        font-size: 2rem;
+        margin-right: 5px;
+      }
+
+      /* User Section Styles */
+      .user {
+        align-items: center;
+        margin: 1rem 0;
+        display: inline-flex;
+      }
+
+      .user p {
+        color: #fff;
+        opacity: 1;
+        margin-left: 1rem;
+      }
+
+      /* Styles for Navigation Icons */
+      .sidebar p {
+        opacity: 0;
+      }
+
+      .sidebar.active p {
+        opacity: 1;
+      }
+
+      .sidebar ul li {
+        position: relative;
+        list-style-type: none;
+        height: 50px;
+        width: 90%;
+        margin: 0.8rem auto;
+        line-height: 50px;
+      }
+
+      .sidebar ul li a {
+        color: #fff;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        border-radius: 0.8rem;
+      }
+
+      /* Hover Mechanics */
+      .sidebar ul li a:hover {
+        background-color: #fff;
+        color: #202229;
+      }
+
+      .sidebar ul li a i {
+        min-width: 50px;
+        text-align: center;
+        height: 50px;
+        border-radius: 12px;
+        line-height: 50px;
+      }
+
+      /* Navigation Item Label Styles */
+      .sidebar .Nav_Item {
+        display: none;
+      }
+
+      .sidebar.active .Nav_Item {
+        display: inline-block;
+      }
+
+      /* Tooltip Styles */
+      .sidebar ul li .tooltip {
+        position: absolute;
+        left: 75px;
+        top: 5%;
+        background-color: white;
+        transform: translateX(-50%, -50%);
+        box-shadow: 0 0.5rem 0.8rem rgba(0, 0, 0, 0.2);
+        border-radius: 0.6rem;
+        padding: 0.4rem 1.2rem;
+        line-height: 1.8rem;
+        z-index: 20;
+        display: none;
+      }
+
+      .sidebar ul li:hover .tooltip {
+        display: inline-block;
+      }
+
+      .sidebar.active ul li .tooltip {
+        display: none;
+      }
+
+      /* Main Content Styles */
+      .main_content {
+        position: relative;
+        background-color: var(--gray);
+        overflow: hidden;
+        min-height: 100vh;
+        top: 0;
+        left: 80px;
+        transition: all 0.5s ease;
+        width: 94.75vw;
+        max-width: 100%;
+        padding: 1rem;
+        opacity: 1;
+        color: white;
+      }
+
+      .main_content .container {
+        color: black;
+      }
+
+      .main_content:not(.dark-mode) {
+        background-color: white;
+        color: black;
+      }
+
+      .sidebar:not(.dark-mode) {
+        background-color: var(--gray);
+      }
+
+      /* Container Styles */
+      .container {
+        display: flex;
+        overflow: hidden;
+        max-width: 99.5vw;
+        background-color: bisque;
+        padding: 4px 15px;
+        border-radius: 10px;
+      }
+
+      .profile_picture {
+        width: 200px;
+        height: 200px;
+        border-radius: 100%;
+        border: 4px solid #000000;
+        position: relative;
+        top: 8vh;
+        left: 10vw;
+        overflow: hidden;
+      }
+
+      .editable_image {
+        position: absolute;
+        bottom: 0;
+        outline: none;
+        color: transparent;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px 120px;
+        cursor: pointer;
+        transition: 0.5s;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0; /* Hide the input */
+      }
+
+      .upload_button {
+        opacity: 0;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px 0;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.5s;
+        background: rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+        font-weight: bold;
+      }
+
+      .profile_picture:hover .upload_button {
+        background: rgba(0, 0, 0, 0.8);
+        opacity: 1;
+      }
+
+      #previewImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures the image covers the entire container */
+      }
+
+      textarea {
+        width: 60%;
+        height: 200px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        box-shadow: inset 0 0 7px 5px #ddd;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        font-size: 16px;
+        resize: none;
+        position: relative;
+        top: 17vh;
+        left: 10vw;
+      }
+
+      :root {
+        --dark: #111111;
+        --gray: #202229;
+      }
+
+      .name {
+        font-size: 42px;
+        font-weight: 1000;
+        position: relative;
+        top: 5vh;
+        left: 10vw;
+      }
+
+      .Save_Button {
+        position: relative;
+        top: 20vh;
+        left: 60vw;
+        font-size: larger;
+        padding: 10px 10px;
+      }
+
+      .info {
+        position: absolute;
+        left: 55vw;
+        top: 25vh;
+        line-height: 25px;
+      }
+
+      .bold {
+        font-weight: 1000;
+      }
+
+      .text {
+        font-size: 20px;
+        position: relative;
+        top: 15vh;
+        left: 10vw;
+      }
+
+      /* CSS for styling the modal dialog */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        max-width: 90%;
+        max-height: 80%;
+        display: flex;
+        flex-direction: column;
+        height: 750px; /* Fixed height for the modal content */
+      }
+
+      .modal-body {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .help-section {
+        margin-left: 50px;
+      }
+
+      #selectedImage {
+        width: 60%;
+        height: auto;
+        max-width: 100%;
+        max-height: 80vh;
+      }
+
+      #cropperContainer {
+        width: 35%;
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 600px;
+      }
+
+      #cropperImage {
+        width: 100%;
+        height: 100%;
+      }
+
+      .preview-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .img-preview {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border: 1px solid #ddd;
+        margin-top: 10px;
+        box-sizing: border-box;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end; /* Align items to the bottom */
+        flex-grow: 1; /* Allow the footer to grow to take up available space */
+        margin-top: auto; /* Push the footer to the bottom */
+      }
+
+      #btnCrop {
+        margin-right: 20px;
+        background-color: green; /* Green color for Crop button */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Add transition effect */
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      #btnCrop:hover {
+        background-color: darkgreen; /* Darker green on hover */
+        font-size: 22px;
+      }
+
+      .close {
+        margin-left: 10px; /* Add margin between Crop and Close buttons */
+      }
+
+      .close {
+        margin-right: 20px;
+        background-color: red; /* Red color for Close button */
+        cursor: pointer;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease; /* Add transition effect */
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .close:hover {
+        background-color: darkred; /* Darker red on hover */
+        color: white;
+        font-size: 22px;
+      }
+
+      /* Styling for the circular crop area */
+      .cropper-crop-box {
+        border-radius: 50%;
+        border: 2px solid #fff; /* Add border around the crop circle */
+        overflow: hidden;
+        position: relative; /* Ensure that absolute positioning works correctly */
+      }
+
+      /* Styling for the resize handles */
+      .cropper-point.point-e,
+      .cropper-point.point-w,
+      .cropper-point.point-n,
+      .cropper-point.point-s {
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.8
+        ) !important; /* Change the color of the resize handles */
+        width: 10px !important; /* Adjust the width of the resize handles */
+        height: 10px !important; /* Adjust the height of the resize handles */
+        border: 2px solid #fff !important; /* Add a border around the resize handles */
+      }
+
+      /* Styling for the crop guides */
+      .cropper-dashed,
+      .cropper-face {
+        border: 2px dashed rgba(255, 255, 255, 0.8) !important; /* Change the color and style of the crop guides */
+      }
+    </style>
+  </head>
+  <body onload="onload()">
+    <div class="sidebar">
+      <div class="top">
+          <div class="logo"> 
+              <img src="../Images/Logo.png" alt="logo" width="50px" height="50px">
+              <span>FITBOARD</span>
+          </div>
+          <i class='bx bx-menu' id="btn"></i>
+      </div>
+
+      <div class="user">
+          <img src="../Images/User_Image.jpg" alt="profile picture" class="User_Image" id="userImage">
+          <div>
+              <p class="bold" id="profileName">Default User</p>
+              <p id="profileRole">Admin</p>
+          </div>
+      </div>
+
+      <ul class="tabs">
+          <li>
+              <a href="../Home_Page/Home_Page.html">
+                  <i class="bx bxs-grid-alt"></i>
+                  <span class="Nav_Item">Dashboard</span>
+              </a>
+              <span class="tooltip">Dashboard</span>
+          </li>
+          <li>
+              <a href="Profile.html">
+                  <i class="bx bxs-user-circle"></i>
+                  <span class="Nav_Item">Profile</span>
+              </a>
+              <span class="tooltip">Profile</span>
+          </li>
+          <li>
+              <a href="../Program Modification/Program Modification.html">
+                  <i class="bx bxs-duplicate"></i>
+                  <span class="Nav_Item">Modify Programs</span>
+              </a>
+              <span class="tooltip">Modify Programs</span>
+          </li>
+          <li>
+              <a href="../Notifications/Notifications.html">
+                  <i class="bx bxs-bell-ring"></i>
+                  <span class="Nav_Item">Notifications</span>
+              </a>
+              <span class="tooltip">Notifications</span>
+          </li>
+          <li>
+              <a href="../Upload_Video/Videos.html">
+                  <i class="bx bxs-video"></i>
+                  <span class="Nav_Item">Video Tutorials</span>
+              </a>
+              <span class="tooltip">Video Tutorials</span>
+          </li>
+          <li>
+              <a href="../Settings/Settings.html">
+                  <i class="bx bxs-cog"></i>
+                  <span class="Nav_Item">Settings</span>
+              </a>
+              <span class="tooltip">Settings</span>
+          </li>
+          <li>
+              <a href="../Help/Help.html">
+                  <i class="bx bxs-help-circle"></i>
+                  <span class="Nav_Item">Help</span>
+              </a>
+              <span class="tooltip">Help</span>
+          </li>
+          <li>
+              <a href="../Landing_Page/LandingPage.html" id="logoutBtn">
+                  <i class="bx bxs-log-out"></i>
+                  <span class="Nav_Item">Logout</span>
+              </a>
+              <span class="tooltip">Logout</span>
+          </li>
+      </ul>
+  </div>
+
+  <div class="main_content">
+      <div class="container" id="container">
+          <h1 id="main-heading">FitBoard</h1>
+          <h1 id="sub-heading">Profile</h1>
+          <h3>&#160&#160Profile</h3>
+      </div>
+
+      <div class="name">
+          <p class="bold" id="studentName">Default User</p>
+      </div>
+
+      <div class="info">
+          <ul style="list-style-type: none;">
+              <li>
+                  <span class="Student_ID"><span class="bold">Student ID</span></br><span id="studentId">442240175</span></span>
+              </li>
+              </br>
+              <li>
+                  <span class="Year"><span class="bold">Year</span></br><span id="yearGroup">12</span></span>
+              </li>
+              </br>
+              <li>
+                  <span class="Rollcall_Class"><span class="bold">Rollcall Class</span></br><span id="rollClass">Farrington</span></span>
+              </li>
+          </ul>
+      </div>
+
+      <!-- HTML for the modal dialog -->
+      <div id="modalDialog" class="modal">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <img id="selectedImage" src="#" alt="Selected Image">
+                  <div id="cropperContainer" class="cropper-inner-container">
+                      <img id="cropperImage" src="#" alt="Crop Image">
+                  </div>
+                  <div class="help-section">
+                      <h3>Help</h3>
+                      <p>Drag edges of circle too resize. Drag across a blank area to draw a new circle. Move the existing circle around by dragging it's center. Press crop to save</p>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button id="btnCrop">Crop</button>
+                  <button class="close">Close</button>
+              </div>
+          </div>
+      </div>
+
+      <div class="profile_picture">
+          <input type="file" class="editable_image" accept="image/*" id="fileInput">
+          <label for="fileInput" class="upload_button">Upload Image</label>
+          <img id="previewImage" src="../Images/User_Image.jpg" alt="Preview" />
+      </div>
+
+      <div class="biography">
+          <span class="text"><span class="bold">Biography</span></span>
+          <div class="textbox">
+              <textarea></textarea>
+          </div>
+      </div>
+      <button class="Save_Button">
+          <i class="bx bxs-save"></i> <span>Save</span>
+      </button>
+  </div>
+
+  <script>
+      // Retrieve student data from local storage
+      var studentData = JSON.parse(localStorage.getItem("studentData"));
+
+      // Display student profile
+      if (studentData) {
+          document.getElementById("studentName").textContent = `${studentData.givenName} ${studentData.surname}`;
+          document.getElementById("studentId").textContent = studentData.studentId;
+          document.getElementById("yearGroup").textContent = studentData.yearGroup;
+          document.getElementById("rollClass").textContent = studentData.rollClass;
+      } else {
+          document.getElementById("studentName").textContent = "No student data found.";
+          document.getElementById("studentId").textContent = "";
+          document.getElementById("yearGroup").textContent = "";
+          document.getElementById("rollClass").textContent = "";
+      }
+
+      // Logout button click event handler
+      document.getElementById("logoutBtn").addEventListener("click", function () {
+          // Remove student data from local storage
+          localStorage.removeItem("studentData");
+      });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const storedImage = localStorage.getItem("userImage");
+    if (storedImage) {
+        document.getElementById("userImage").src = storedImage;
+        document.getElementById("previewImage").src = storedImage;
+    }
+});
+  </script>
+
+  <script>
+    let cropper; // Store the cropper instance globally
+
+// Handle file input change event
+document.getElementById("fileInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageDataURL = e.target.result;
+            updateSelectedImage(imageDataURL); // Update image on the left side of the modal
+            openCenteredDialog(imageDataURL); // Open centered dialog and set the image
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Function to update the selected image on the left side of the modal
+function updateSelectedImage(imageURL) {
+    document.getElementById("selectedImage").src = imageURL;
+}
+
+// Function to open a centered modal dialog and set the image
+function openCenteredDialog(imageURL) {
+    const modal = document.getElementById("modalDialog");
+    modal.style.display = "block";
+
+    const cropperImage = document.getElementById("cropperImage");
+    cropperImage.src = imageURL;
+
+    // Hide the selected image when the modal is opened
+    document.getElementById("selectedImage").style.display = "none";
+
+    // Initialize Cropper.js instance or reset it if already exists
+    if (cropper) {
+        cropper.replace(imageURL);
+    } else {
+        cropper = new Cropper(cropperImage, {
+            aspectRatio: 1, // Aspect ratio for the crop area (1:1 for a circular crop)
+            viewMode: 1, // Restricts the crop box to always fit within the canvas
+            autoCropArea: 1, // Automatically creates a crop box that fills the canvas
+            responsive: true, // Enables responsive mode
+            cropBoxResizable: true, // Allow crop box to be resized
+            cropBoxMovable: true, // Allow crop box to be moved
+            guides: true, // Hide the crop guides for a cleaner UI
+            center: true, // Show the center indicator for the crop area
+            background: false, // Do not show the background of the container
+            highlight: true, // Do not show the overlay on the cropped area
+            rotatable: true, // Disable image rotation
+            zoomable: false, // Disable zooming
+        });
+    }
+
+    // Close the modal when clicking on the close button
+    const closeButton = document.querySelector(".close");
+    closeButton.onclick = function() {
+        modal.style.display = "none";
+        // Show the selected image again
+        document.getElementById("selectedImage").style.display = "block";
+        window.location.reload()
+    };
+
+    // Handle crop button click event
+    const cropButton = document.getElementById("btnCrop");
+    cropButton.onclick = function() {
+        // Get the cropped canvas
+        const canvas = cropper.getCroppedCanvas({
+            width: 200, // Set a fixed width for the cropped image
+            height: 200 // Set a fixed height for the cropped image
+        });
+
+        // Convert canvas to data URL and update previewImage and userImage
+        const croppedImageURL = canvas.toDataURL();
+        document.getElementById("previewImage").src = croppedImageURL;
+        document.getElementById("userImage").src = croppedImageURL;
+
+        window.location.reload()
+
+        // Close the modal
+        modal.style.display = "none";
+
+        // Optional: Store cropped image URL in local storage
+        localStorage.setItem("userImage", croppedImageURL);
+        localStorage.setItem("previewImage", croppedImageURL);
+
+        // Show the selected image again
+        document.getElementById("selectedImage").style.display = "block";
+    };
+}
+
+// Check if there's a stored image and update the user image and previewImage
+document.addEventListener("DOMContentLoaded", function() {
+    const storedImage = localStorage.getItem("userImage");
+    if (storedImage) {
+        document.getElementById("userImage").src = storedImage;
+        document.getElementById("previewImage").src = storedImage;
+    }
+});
+
+// Function to update the size of the resize handles based on the crop area dimensions
+function updateHandleSize() {
+    const cropBox = document.querySelector('.cropper-crop-box');
+    const handleSize = Math.min(cropBox.offsetWidth, cropBox.offsetHeight) * 0.1; // Adjust the handle size as a percentage of the crop box size
+
+    const resizeHandles = document.querySelectorAll('.cropper-point');
+    resizeHandles.forEach(handle => {
+        handle.style.width = handleSize + 'px';
+        handle.style.height = handleSize + 'px';
+    });
+}
+
+  </script>
+  
+  </body>
+</html>
