@@ -41,6 +41,20 @@
             font-weight: bold;
             animation: fadeIn 4s ease-in-out;
         }
+        .button {
+            background-color: #ffdd57;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #ffd700;
+        }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -59,6 +73,7 @@
     <div class="container">
         <h1>Welcome!</h1>
         <p>Enjoy these cool 3D animations. Visit <a href="sbhsdemo.php">sbhsdemo.php</a> for more.</p>
+        <button class="button" onclick="window.location.href='test.php';">Go to Test Page</button>
     </div>
 </body>
 </html>
